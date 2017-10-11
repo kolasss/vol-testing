@@ -1,24 +1,24 @@
 # == Schema Information
 #
-# Table name: posts
+# Table name: comments
 #
 #  id           :integer          not null, primary key
-#  title        :string           not null
 #  body         :text             not null
-#  author_id    :integer          not null
 #  published_at :datetime         not null
+#  post_id      :integer          not null
+#  author_id    :integer          not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
 
-class Post < ApplicationRecord
+class Comment < ApplicationRecord
   belongs_to :author, class_name: 'Users::User'
-  has_many :comments, dependent: :destroy
+  belongs_to :post
 
-  validates :title, presence: true
   validates :body, presence: true
   validates :published_at, presence: true
   validates :author, presence: true
+  validates :post, presence: true
 
   scope :by_published, -> { order(published_at: :desc) }
 end

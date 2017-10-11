@@ -1,21 +1,21 @@
 # == Schema Information
 #
-# Table name: posts
+# Table name: comments
 #
 #  id           :integer          not null, primary key
-#  title        :string           not null
 #  body         :text             not null
-#  author_id    :integer          not null
 #  published_at :datetime         not null
+#  post_id      :integer          not null
+#  author_id    :integer          not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
 
 FactoryGirl.define do
-  factory :post do
-    title         { Faker::StarWars.character }
-    body          { Faker::StarWars.quote }
-    published_at  { Faker::Time.between(3.days.ago, 1.days.ago, :all) }
+  factory :comment do
+    body          { Faker::Overwatch.quote }
+    published_at  { Faker::Time.between(post.published_at, Date.today, :all) }
     association :author, factory: :user
+    post
   end
 end

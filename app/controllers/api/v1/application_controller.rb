@@ -5,10 +5,6 @@ class Api::V1::ApplicationController < ActionController::Base
   # fix вызов current_user в AMS
   serialization_scope nil
 
-  # before_action :require_login # проверка логина юзера
-
-  # after_action :verify_authorized # проверка что применяется пундит
-
   # если нет прав на действие
   rescue_from Pundit::NotAuthorizedError, with: :user_not_authorized
 

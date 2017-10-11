@@ -16,6 +16,7 @@ class Users::User < ApplicationRecord
 
   has_many :authentications, dependent: :destroy
   has_many :posts, foreign_key: 'author_id', dependent: :destroy
+  has_many :comments, foreign_key: 'author_id', dependent: :destroy
 
   USER_ROLES = [
     'Blogger',

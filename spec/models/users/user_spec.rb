@@ -32,17 +32,12 @@ RSpec.describe Users::User, type: :model do
   describe 'associations' do
     it { is_expected.to have_many(:authentications).dependent(:destroy) }
     it { is_expected.to have_many(:posts).dependent(:destroy).with_foreign_key('author_id') }
+    it { is_expected.to have_many(:comments).dependent(:destroy).with_foreign_key('author_id') }
   end
 
   describe 'scopes' do
     describe '.by_created' do
-      let!(:users) {
-        [
-          FactoryGirl.create(:user),
-          FactoryGirl.create(:user),
-          FactoryGirl.create(:user)
-        ]
-      }
+      let!(:users) { FactoryGirl.create_list(:user, 3) }
 
       it 'returns users sorted by created_at descending' do
         expect(described_class.by_created).to eq described_class.order(created_at: :desc)
