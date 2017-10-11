@@ -3,7 +3,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # GET /users
   def index
-    # authorize Users::User
     @users = Users::User.by_created
     render json: @users, each_serializer: Users::UserSerializer
   end
@@ -16,7 +15,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # POST /users
   def create
-    # authorize Users::User
     @user = Users::User.new(user_params)
     if NewUserService.new(@user).create
       render json: @user, status: :created
@@ -27,9 +25,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # PATCH/PUT /users/1
   def update
-    set_user
-    @user = Users::User.find(params[:id])
-
+    set_and_authorize_user
     if @user.update(user_params)
       render json: @user
     else
@@ -39,7 +35,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # DELETE /users/1
   def destroy
-    set_user
+    set_and_authorize_user
     if @user.destroy
       head :no_content
     else
@@ -49,8 +45,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   # PUT /users/1/change_role
   def change_role
-    set_user
-
+    set_and_authorize_user
     if @user.update(role: params[:user][:role])
       render json: @user
     else
@@ -62,7 +57,11 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
     def set_user
       @user = Users::User.find(params[:id])
-      # authorize @user
+    end
+
+    def set_and_authorize_user
+      set_user
+      authorize @user
     end
 
     def user_params

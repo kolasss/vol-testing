@@ -184,8 +184,6 @@ RSpec.describe "Api::V1::Posts", type: :request do
 
   describe "update post" do
     let(:post) { FactoryGirl.create(:post) }
-    let(:user) { FactoryGirl.create(:user_with_auth) }
-    let(:headers) { auth_header user }
 
     context 'without authorization' do
       it 'have unauthorized status' do
@@ -195,57 +193,87 @@ RSpec.describe "Api::V1::Posts", type: :request do
     end
 
     context 'with authorization' do
-      context 'with valid parameters' do
-        before do
-          @params = { post: {
-            title: 'new title',
-            body: 'new body'
-          }}
-          put "/api/v1/posts/#{post.id}", params: @params, headers: headers
+      context 'as author' do
+        let(:user) { FactoryGirl.create(:user_with_auth) }
+        let(:headers) { auth_header user }
+        let(:post) { FactoryGirl.create(:post, author: user) }
+
+        context 'with valid parameters' do
+          before do
+            @params = { post: {
+              title: 'new title',
+              body: 'new body'
+            }}
+            put "/api/v1/posts/#{post.id}", params: @params, headers: headers
+          end
+
+          it 'have json content type' do
+            expect(response.content_type).to eq("application/json")
+          end
+
+          it 'have status ok' do
+            expect(response).to have_http_status(200)
+          end
+
+          it "show post json" do
+            serialization = ActiveModelSerializers::Adapter.create(PostSerializer.new post).as_json
+            serialization.merge! @params[:post]
+            expect(response.body).to eq serialization.to_json
+          end
         end
 
-        it 'have json content type' do
-          expect(response.content_type).to eq("application/json")
-        end
+        context 'with invalid parameters' do
+          before do
+            params = { post: {
+              title: ""
+            } }
+            put "/api/v1/posts/#{post.id}", params: params, headers: headers
+          end
 
-        it 'have status ok' do
-          expect(response).to have_http_status(200)
-        end
+          it 'have json content type' do
+            expect(response.content_type).to eq("application/json")
+          end
 
-        it "show post json" do
-          serialization = ActiveModelSerializers::Adapter.create(PostSerializer.new post).as_json
-          serialization.merge! @params[:post]
-          expect(response.body).to eq serialization.to_json
+          it 'have status unprocessable_entity' do
+            expect(response).to have_http_status(422)
+          end
+
+          it "show errors" do
+            expect(response.body).to include('errors')
+          end
         end
       end
 
-      context 'with invalid parameters' do
-        before do
+      context 'as another blogger' do
+        it 'is not allowed' do
+          blogger = FactoryGirl.create(:user_with_auth, role: 'Blogger')
+          headers = auth_header blogger
           params = { post: {
-            title: ""
+            title: "title"
           } }
           put "/api/v1/posts/#{post.id}", params: params, headers: headers
+          expect(response).to have_http_status(403)
         end
+      end
 
-        it 'have json content type' do
-          expect(response.content_type).to eq("application/json")
-        end
-
-        it 'have status unprocessable_entity' do
-          expect(response).to have_http_status(422)
-        end
-
-        it "show errors" do
-          expect(response.body).to include('errors')
+      context 'as admin' do
+        it 'is allowed' do
+          admin = FactoryGirl.create(:user_with_auth, role: 'Administrator')
+          headers = auth_header admin
+          params = { post: {
+            title: "title"
+          } }
+          put "/api/v1/posts/#{post.id}", params: params, headers: headers
+          expect(response).to have_http_status(200)
         end
       end
     end
   end
 
   describe "destroy post" do
-    let!(:post) { FactoryGirl.create(:post) }
     let!(:user) { FactoryGirl.create(:user_with_auth) }
     let(:headers) { auth_header user }
+    let!(:post) { FactoryGirl.create(:post, author: user) }
 
     context 'without authorization' do
       it 'have unauthorized status' do
@@ -255,23 +283,45 @@ RSpec.describe "Api::V1::Posts", type: :request do
     end
 
     context 'with authorization' do
-      before do
-        delete "/api/v1/posts/#{post.id}", headers: headers
-      end
+      context 'as author' do
+        context 'response' do
+          before do
+            delete "/api/v1/posts/#{post.id}", headers: headers
+          end
 
-      it 'have status no_content' do
-        expect(response).to have_http_status(204)
-      end
+          it 'have status no_content' do
+            expect(response).to have_http_status(204)
+          end
 
-      it "show nothing" do
-        expect(response.body).to be_empty
+          it "show nothing" do
+            expect(response.body).to be_empty
+          end
+        end
+
+        it 'deletes post' do
+          expect {
+            delete "/api/v1/posts/#{post.id}", headers: headers
+          }.to change(Post, :count).by(-1)
+        end
       end
     end
 
-    it 'deletes post' do
-      expect {
+    context 'as another blogger' do
+      it 'is not allowed' do
+        blogger = FactoryGirl.create(:user_with_auth, role: 'Blogger')
+        headers = auth_header blogger
         delete "/api/v1/posts/#{post.id}", headers: headers
-      }.to change(Post, :count).by(-1)
+        expect(response).to have_http_status(403)
+      end
+    end
+
+    context 'as admin' do
+      it 'is allowed' do
+        admin = FactoryGirl.create(:user_with_auth, role: 'Administrator')
+        headers = auth_header admin
+        delete "/api/v1/posts/#{post.id}", headers: headers
+        expect(response).to have_http_status(204)
+      end
     end
   end
 end

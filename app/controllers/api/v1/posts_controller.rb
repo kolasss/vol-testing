@@ -17,7 +17,7 @@ class Api::V1::PostsController < Api::V1::ApplicationController
 
   # POST /posts
   def create
-    # authorize Post
+    authorize Post
     @post = Post.new(post_params)
 
     if NewPostService.new(@post).create(current_user)
@@ -29,7 +29,7 @@ class Api::V1::PostsController < Api::V1::ApplicationController
 
   # PATCH/PUT /posts/1
   def update
-    set_post
+    set_and_authorize_post
     if @post.update(post_params)
       render json: @post
     else
@@ -39,7 +39,7 @@ class Api::V1::PostsController < Api::V1::ApplicationController
 
   # DELETE /posts/1
   def destroy
-    set_post
+    set_and_authorize_post
     if @post.destroy
       head :no_content
     else
@@ -51,7 +51,11 @@ class Api::V1::PostsController < Api::V1::ApplicationController
 
     def set_post
       @post = Post.find(params[:id])
-      # authorize @post
+    end
+
+    def set_and_authorize_post
+      set_post
+      authorize @post
     end
 
     def post_params

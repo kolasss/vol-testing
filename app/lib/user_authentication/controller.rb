@@ -20,15 +20,13 @@ module UserAuthentication
       end
 
       def current_user
-        unless defined?(@current_user)
-          login_from_token
-        end
-        @current_user
+        @current_user ||= login_from_token
       end
 
       def login_from_token
-        user_not_authenticated unless auth_id_included_in_auth_token?
-        @current_user = Users::User.find_by_auth_id(decoded_auth_token[:auth_id])
+        if auth_id_included_in_auth_token?
+          Users::User.find_by_auth_id(decoded_auth_token[:auth_id])
+        end
       rescue JWT::VerificationError, JWT::DecodeError, JWT::InvalidIatError
         user_not_authenticated
       end
