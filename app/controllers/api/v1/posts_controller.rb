@@ -3,7 +3,7 @@ class Api::V1::PostsController < Api::V1::ApplicationController
 
   # GET /posts
   def index
-    @posts = Post.by_published.page params[:page]
+    @posts = Post.includes(:author).by_published.page params[:page]
     @posts = @posts.per(params[:per_page]) if params[:per_page]
     set_headers
     render json: @posts

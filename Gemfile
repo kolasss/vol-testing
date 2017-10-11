@@ -1,4 +1,5 @@
 source 'https://rubygems.org'
+ruby '2.4.2'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -19,6 +20,7 @@ gem 'pundit' # authorization
 gem 'jwt' # JSON Web Token
 
 gem 'kaminari' #pagination
+gem 'faker'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -29,7 +31,6 @@ end
 
 group :test do
   gem 'shoulda-matchers', '~> 3.1'
-  gem 'faker'
 end
 
 group :development do
