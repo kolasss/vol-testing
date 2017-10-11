@@ -15,6 +15,7 @@ class Users::User < ApplicationRecord
   has_secure_password
 
   has_many :authentications, dependent: :destroy
+  has_many :posts, foreign_key: 'author_id', dependent: :destroy
 
   USER_ROLES = [
     'Blogger',

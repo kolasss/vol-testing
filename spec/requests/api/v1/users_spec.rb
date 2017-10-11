@@ -2,13 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Users", type: :request do
   describe "show users list" do
-    let!(:users) {
-      [
-        FactoryGirl.create(:user),
-        FactoryGirl.create(:user),
-        FactoryGirl.create(:user)
-      ]
-    }
+    let!(:users) { FactoryGirl.create_list(:user, 3) }
 
     before do
       get '/api/v1/users'

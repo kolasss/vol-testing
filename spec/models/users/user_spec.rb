@@ -31,10 +31,11 @@ RSpec.describe Users::User, type: :model do
 
   describe 'associations' do
     it { is_expected.to have_many(:authentications).dependent(:destroy) }
+    it { is_expected.to have_many(:posts).dependent(:destroy).with_foreign_key('author_id') }
   end
 
   describe 'scopes' do
-    context '.by_created' do
+    describe '.by_created' do
       let!(:users) {
         [
           FactoryGirl.create(:user),

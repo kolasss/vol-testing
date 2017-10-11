@@ -12,6 +12,7 @@ Rails.application.routes.draw do
           put :change_role
         end
       end
+      resources :posts, except: [:new, :edit]
     end
   end
 end

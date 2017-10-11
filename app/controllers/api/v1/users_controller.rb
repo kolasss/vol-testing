@@ -2,7 +2,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   before_action :require_login, only: [:update, :destroy, :change_role]
 
   # GET /users
-  # GET /users.json
   def index
     # authorize Users::User
     @users = Users::User.by_created
@@ -10,14 +9,12 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   # GET /users/1
-  # GET /users/1.json
   def show
     set_user
     render json: @user
   end
 
   # POST /users
-  # POST /users.json
   def create
     # authorize Users::User
     @user = Users::User.new(user_params)
@@ -29,7 +26,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   # PATCH/PUT /users/1
-  # PATCH/PUT /users/1.json
   def update
     set_user
     @user = Users::User.find(params[:id])
@@ -42,7 +38,6 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   # DELETE /users/1
-  # DELETE /users/1.json
   def destroy
     set_user
     if @user.destroy
