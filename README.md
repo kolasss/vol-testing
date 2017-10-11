@@ -1,24 +1,5 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+тестовое приложение по заданию http://jobs.wearevolt.com/me/tasks/2c3f5383-8c45-4352-9f46-60413a6f6bf8
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+heroku: https://secure-citadel-92820.herokuapp.com/
