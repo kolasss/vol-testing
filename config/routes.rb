@@ -13,6 +13,8 @@ Rails.application.routes.draw do
         end
       end
       resources :posts, except: [:new, :edit]
+
+      get 'reports/by_author', to: 'reports#by_author'
     end
   end
 

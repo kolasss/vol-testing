@@ -1,0 +1,49 @@
+<style>
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
+</style>
+
+<h1> Аналитический отчет </h1>
+
+<p>Пользователи с записями и комментариями за период:</p>
+<p>с <%= l @start_date %> по <%= l @end_date %></p>
+
+<% if @rows.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>nickname</th>
+        <th>email</th>
+        <th>количество записей за период</th>
+        <th>количество комментариев за период</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @rows.each_with_index do |row, i| %>
+        <tr>
+          <th><%= i %></th>
+          <th><%= row.nickname %></th>
+          <th><%= row.email %></th>
+          <th><%= row.posts %></th>
+          <th><%= row.comments %></th>
+        </tr>
+      <% end %>
+    <tbody>
+  </table>
+<% else %>
+  <p>За указанный период записей не обнаружено</p>
+<% end %>

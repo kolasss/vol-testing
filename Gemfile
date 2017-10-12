@@ -26,6 +26,8 @@ gem 'carrierwave', '~> 1.0'
 gem 'mini_magick'
 gem "fog-aws"
 
+gem 'sidekiq' # background worker
+
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
@@ -47,4 +49,6 @@ group :development do
 
   gem 'guard' # auto testing
   gem 'guard-rspec', require: false
+
+  gem "letter_opener"
 end
