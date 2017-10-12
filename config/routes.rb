@@ -15,4 +15,7 @@ Rails.application.routes.draw do
       resources :posts, except: [:new, :edit]
     end
   end
+
+  get 'avatar', to: 'avatar#index'
+  patch 'avatar', to: 'avatar#create'
 end

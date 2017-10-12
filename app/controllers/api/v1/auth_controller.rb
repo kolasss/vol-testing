@@ -1,5 +1,4 @@
 class Api::V1::AuthController < Api::V1::ApplicationController
-  # before_action :skip_authorization
   before_action :require_login, only: [:destroy_tokens]
 
   # POST /auth

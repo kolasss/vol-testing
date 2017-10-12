@@ -9,6 +9,7 @@
 #  role            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  avatar          :string
 #
 
 require 'rails_helper'

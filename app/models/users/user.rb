@@ -9,6 +9,7 @@
 #  role            :string           not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
+#  avatar          :string
 #
 
 class Users::User < ApplicationRecord
@@ -17,6 +18,8 @@ class Users::User < ApplicationRecord
   has_many :authentications, dependent: :destroy
   has_many :posts, foreign_key: 'author_id', dependent: :destroy
   has_many :comments, foreign_key: 'author_id', dependent: :destroy
+
+  mount_uploader :avatar, AvatarUploader
 
   USER_ROLES = [
     'Blogger',

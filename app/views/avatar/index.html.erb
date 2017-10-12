@@ -1,0 +1,60 @@
+<style>
+  .form {
+    max-width: 340px;
+    padding: 15px;
+    margin: 0 auto;
+  }
+  .field_with_errors {
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+  .alert ul {
+    margin-bottom: 0;
+  }
+  .container {
+    margin-top: 1rem;
+  }
+</style>
+
+<div class="container">
+  <h1 class="text-center">Пользователь: <%= @user.nickname %></h1>
+
+  <%= image_tag(@user.avatar.thumb.url, class: 'img-thumbnail mx-auto d-block img-fluid') if @user.avatar? %>
+
+  <%# костыль чтобы не передавать токен через браузер %>
+  <%= form_for @user, url: avatar_path(id: params[:id]), html: {class: 'form'} do |f| %>
+    <% if @user.errors.any? %>
+      <div class="alert alert-danger">
+        <ul>
+        <% @user.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <fieldset>
+      <div class="form-group">
+        <label for="avatarInput">Аватар</label>
+        <%= f.file_field :avatar, class: 'form-control-file', id: 'avatarInput' %>
+      </div>
+
+      <%= f.hidden_field :avatar_cache %>
+
+      <div class="form-check">
+        <label class="form-check-label">
+          <%= f.check_box :remove_avatar, class: 'form-check-input' %>
+          Удалить аватар
+        </label>
+      </div>
+    </fieldset>
+
+    <%= f.submit 'Загрузить', class: 'btn btn-primary' %>
+  <% end %>
+</div>
+
