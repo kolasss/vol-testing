@@ -4,10 +4,12 @@
 
 heroku: https://secure-citadel-92820.herokuapp.com/
 
-Аутентификация через JWT. Bearer token header
+## Первая часть
+### Аутентификация через JWT. Bearer token header
 
-Для получения токена нужно отправить(все данные в примерах рабочие):
+* Для получения токена нужно отправить(все данные в примерах рабочие):
 
+```
 POST https://secure-citadel-92820.herokuapp.com//api/v1/auth
 {
 	"user": {
@@ -15,13 +17,15 @@ POST https://secure-citadel-92820.herokuapp.com//api/v1/auth
 		"password" : "password"
 	}
 }
+```
 
 придет токен, сохраните его.
 
-Для аутентификации отправялем запрос с хедером вида:
+* Для аутентификации отправялем запрос с хедером вида:
 
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdXRoX2lkIjoxLCJpYXQiOjE1MDc4MTUyOTN9.rwATvJfvyGQU8bcRWIT5UKi-4u2lFpppxtYEKp52AmM
+> Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdXRoX2lkIjoxLCJpYXQiOjE1MDc4MTUyOTN9.rwATvJfvyGQU8bcRWIT5UKi-4u2lFpppxtYEKp52AmM
 
+```
 POST https://secure-citadel-92820.herokuapp.com/api/v1/posts
 {
 	"post": {
@@ -29,11 +33,13 @@ POST https://secure-citadel-92820.herokuapp.com/api/v1/posts
 		"body": "новое боди"
 	}
 }
+```
 
+## Вторая часть
 
-Страница для загрузки аватара по адресу https://secure-citadel-92820.herokuapp.com/avatar?id=2
+* Страница для загрузки аватара по адресу https://secure-citadel-92820.herokuapp.com/avatar?id=2
 
   сделан костыль для обхода аутентификации через параметр id, в реальной системе, конечно, этого не будет
 
-Запрос отчета по адресу вида(требуется аутентификация):
+* Запрос отчета по адресу вида(требуется аутентификация):
 https://secure-citadel-92820.herokuapp.com/api/v1/reports/by_author?start_date=2017-10-10T12%3A59%3A10.132Z&end_date=2017-10-10T16%3A59%3A10.132Z&email=test%40test.com
