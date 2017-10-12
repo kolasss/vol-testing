@@ -1,6 +1,10 @@
 class GenerateReportJob < ApplicationJob
   queue_as :default
 
+  rescue_from(StandardError) do |exception|
+    return
+  end
+
   def perform(params)
     start_date = Time.parse params['start_date']
     end_date = Time.parse params['end_date']

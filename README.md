@@ -6,6 +6,31 @@ heroku: https://secure-citadel-92820.herokuapp.com/
 
 Аутентификация через JWT. Bearer token header
 
+Для получения токена нужно отправить(все данные в примерах рабочие):
+
+POST https://secure-citadel-92820.herokuapp.com//api/v1/auth
+{
+	"user": {
+		"email": "anahi@anderson.com",
+		"password" : "password"
+	}
+}
+
+придет токен, сохраните его.
+
+Для аутентификации отправялем запрос с хедером вида:
+
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdXRoX2lkIjoxLCJpYXQiOjE1MDc4MTUyOTN9.rwATvJfvyGQU8bcRWIT5UKi-4u2lFpppxtYEKp52AmM
+
+POST https://secure-citadel-92820.herokuapp.com/api/v1/posts
+{
+	"post": {
+		"title": "новый титл",
+		"body": "новое боди"
+	}
+}
+
+
 Страница для загрузки аватара по адресу https://secure-citadel-92820.herokuapp.com/avatar?id=2
 
   сделан костыль для обхода аутентификации через параметр id, в реальной системе, конечно, этого не будет
