@@ -13,11 +13,9 @@ RSpec.describe "Api::V1::Auth", type: :request do
         post "/api/v1/auth", params: params
       end
 
-      it 'have json content type' do
-        expect(response.content_type).to eq("application/json")
-      end
+      include_examples 'json content type'
 
-      it 'have status ok' do
+      it 'has status ok' do
         expect(response).to have_http_status(200)
       end
 
@@ -36,11 +34,9 @@ RSpec.describe "Api::V1::Auth", type: :request do
         post "/api/v1/auth", params: params
       end
 
-      it 'have json content type' do
-        expect(response.content_type).to eq("application/json")
-      end
+      include_examples 'json content type'
 
-      it 'have status unauthorized' do
+      it 'has status unauthorized' do
         expect(response).to have_http_status(401)
       end
 
@@ -56,7 +52,7 @@ RSpec.describe "Api::V1::Auth", type: :request do
     let(:headers) { auth_header_with_auth auth }
 
     context 'without authorization' do
-      it 'have unauthorized status' do
+      it 'has unauthorized status' do
         delete "/api/v1/auth"
         expect(response).to have_http_status(401)
       end
@@ -69,7 +65,7 @@ RSpec.describe "Api::V1::Auth", type: :request do
           delete "/api/v1/auth", params: params, headers: headers
         end
 
-        it 'have status no_content' do
+        it 'has status no_content' do
           expect(response).to have_http_status(204)
         end
 
@@ -106,11 +102,9 @@ RSpec.describe "Api::V1::Auth", type: :request do
           delete "/api/v1/auth", params: params, headers: headers
         end
 
-        it 'have json content type' do
-          expect(response.content_type).to eq("application/json")
-        end
+        include_examples 'json content type'
 
-        it 'have status unprocessable_entity' do
+        it 'has status unprocessable_entity' do
           expect(response).to have_http_status(422)
         end
 

@@ -9,11 +9,9 @@ RSpec.describe "Api::V1::Posts", type: :request do
         get '/api/v1/posts'
       end
 
-      it 'have json content type' do
-        expect(response.content_type).to eq("application/json")
-      end
+      include_examples 'json content type'
 
-      it 'have status ok' do
+      it 'has status ok' do
         expect(response).to have_http_status(200)
       end
 
@@ -25,11 +23,11 @@ RSpec.describe "Api::V1::Posts", type: :request do
         expect(response.body).to eq serialization
       end
 
-      it 'have header with total posts' do
+      it 'has header with total posts' do
         expect(response.headers['Items-Total']).to eq 30
       end
 
-      it 'have header with total pages' do
+      it 'has header with total pages' do
         expect(response.headers['Pages-Total']).to eq 2
       end
     end
@@ -48,7 +46,7 @@ RSpec.describe "Api::V1::Posts", type: :request do
           expect(response.body).to eq serialization
         end
 
-        it 'have header with total pages' do
+        it 'has header with total pages' do
           expect(response.headers['Pages-Total']).to eq 2
         end
       end
@@ -66,7 +64,7 @@ RSpec.describe "Api::V1::Posts", type: :request do
           expect(response.body).to eq serialization
         end
 
-        it 'have header with total pages' do
+        it 'has header with total pages' do
           expect(response.headers['Pages-Total']).to eq 3
         end
       end
@@ -74,23 +72,29 @@ RSpec.describe "Api::V1::Posts", type: :request do
   end
 
   describe "show post" do
-    let!(:post) { FactoryGirl.create(:post) }
+    context 'when found' do
+      let!(:post) { FactoryGirl.create(:post) }
 
-    before do
-      get "/api/v1/posts/#{post.id}"
+      before do
+        get "/api/v1/posts/#{post.id}"
+      end
+
+      include_examples 'json content type'
+
+      it 'has status ok' do
+        expect(response).to have_http_status(200)
+      end
+
+      it "show post json" do
+        serialization = ActiveModelSerializers::Adapter.create(PostSerializer.new post).to_json
+        expect(response.body).to eq serialization
+      end
     end
 
-    it 'have json content type' do
-      expect(response.content_type).to eq("application/json")
-    end
-
-    it 'have status ok' do
-      expect(response).to have_http_status(200)
-    end
-
-    it "show post json" do
-      serialization = ActiveModelSerializers::Adapter.create(PostSerializer.new post).to_json
-      expect(response.body).to eq serialization
+    context 'when not found' do
+      it 'has status not_found' do
+        expect { get "/api/v1/posts/1" }.to raise_error(ActiveRecord::RecordNotFound)
+      end
     end
   end
 
@@ -100,7 +104,7 @@ RSpec.describe "Api::V1::Posts", type: :request do
     let(:headers) { auth_header user }
 
     context 'without authorization' do
-      it 'have unauthorized status' do
+      it 'has unauthorized status' do
         post "/api/v1/posts", params: post_params
         expect(response).to have_http_status(401)
       end
@@ -113,11 +117,9 @@ RSpec.describe "Api::V1::Posts", type: :request do
           post "/api/v1/posts", params: params, headers: headers
         end
 
-        it 'have json content type' do
-          expect(response.content_type).to eq("application/json")
-        end
+        include_examples 'json content type'
 
-        it 'have status created' do
+        it 'has status created' do
           expect(response).to have_http_status(201)
         end
 
@@ -141,11 +143,9 @@ RSpec.describe "Api::V1::Posts", type: :request do
           post "/api/v1/posts", params: params, headers: headers
         end
 
-        it 'have json content type' do
-          expect(response.content_type).to eq("application/json")
-        end
+        include_examples 'json content type'
 
-        it 'have status unprocessable_entity' do
+        it 'has status unprocessable_entity' do
           expect(response).to have_http_status(422)
         end
 
@@ -186,7 +186,7 @@ RSpec.describe "Api::V1::Posts", type: :request do
     let(:post) { FactoryGirl.create(:post) }
 
     context 'without authorization' do
-      it 'have unauthorized status' do
+      it 'has unauthorized status' do
         put "/api/v1/posts/#{post.id}"
         expect(response).to have_http_status(401)
       end
@@ -207,11 +207,9 @@ RSpec.describe "Api::V1::Posts", type: :request do
             put "/api/v1/posts/#{post.id}", params: @params, headers: headers
           end
 
-          it 'have json content type' do
-            expect(response.content_type).to eq("application/json")
-          end
+          include_examples 'json content type'
 
-          it 'have status ok' do
+          it 'has status ok' do
             expect(response).to have_http_status(200)
           end
 
@@ -230,11 +228,9 @@ RSpec.describe "Api::V1::Posts", type: :request do
             put "/api/v1/posts/#{post.id}", params: params, headers: headers
           end
 
-          it 'have json content type' do
-            expect(response.content_type).to eq("application/json")
-          end
+          include_examples 'json content type'
 
-          it 'have status unprocessable_entity' do
+          it 'has status unprocessable_entity' do
             expect(response).to have_http_status(422)
           end
 
@@ -267,6 +263,19 @@ RSpec.describe "Api::V1::Posts", type: :request do
           expect(response).to have_http_status(200)
         end
       end
+
+      context 'when not found' do
+        it 'has status not_found' do
+          admin = FactoryGirl.create(:user_with_auth, role: 'Administrator')
+          headers = auth_header admin
+          params = { post: {
+            title: "title"
+          } }
+          expect {
+            put "/api/v1/posts/1", params: params, headers: headers
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
+      end
     end
   end
 
@@ -276,7 +285,7 @@ RSpec.describe "Api::V1::Posts", type: :request do
     let!(:post) { FactoryGirl.create(:post, author: user) }
 
     context 'without authorization' do
-      it 'have unauthorized status' do
+      it 'has unauthorized status' do
         delete "/api/v1/posts/#{post.id}"
         expect(response).to have_http_status(401)
       end
@@ -289,7 +298,7 @@ RSpec.describe "Api::V1::Posts", type: :request do
             delete "/api/v1/posts/#{post.id}", headers: headers
           end
 
-          it 'have status no_content' do
+          it 'has status no_content' do
             expect(response).to have_http_status(204)
           end
 
@@ -304,23 +313,33 @@ RSpec.describe "Api::V1::Posts", type: :request do
           }.to change(Post, :count).by(-1)
         end
       end
-    end
 
-    context 'as another blogger' do
-      it 'is not allowed' do
-        blogger = FactoryGirl.create(:user_with_auth, role: 'Blogger')
-        headers = auth_header blogger
-        delete "/api/v1/posts/#{post.id}", headers: headers
-        expect(response).to have_http_status(403)
+      context 'as another blogger' do
+        it 'is not allowed' do
+          blogger = FactoryGirl.create(:user_with_auth, role: 'Blogger')
+          headers = auth_header blogger
+          delete "/api/v1/posts/#{post.id}", headers: headers
+          expect(response).to have_http_status(403)
+        end
       end
-    end
 
-    context 'as admin' do
-      it 'is allowed' do
-        admin = FactoryGirl.create(:user_with_auth, role: 'Administrator')
-        headers = auth_header admin
-        delete "/api/v1/posts/#{post.id}", headers: headers
-        expect(response).to have_http_status(204)
+      context 'as admin' do
+        it 'is allowed' do
+          admin = FactoryGirl.create(:user_with_auth, role: 'Administrator')
+          headers = auth_header admin
+          delete "/api/v1/posts/#{post.id}", headers: headers
+          expect(response).to have_http_status(204)
+        end
+      end
+
+      context 'when not found' do
+        it 'has status not_found' do
+          admin = FactoryGirl.create(:user_with_auth, role: 'Administrator')
+          headers = auth_header admin
+          expect {
+            delete "/api/v1/posts/1", headers: headers
+          }.to raise_error(ActiveRecord::RecordNotFound)
+        end
       end
     end
   end

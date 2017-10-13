@@ -55,11 +55,11 @@ RSpec.describe Users::User, type: :model do
     let(:user2) { FactoryGirl.create(:user) }
     let(:auth1) { FactoryGirl.create(:authentication, user: user1) }
 
-    it "find user by authentication's id" do
+    it "finds user by authentication's id" do
       expect(described_class.find_by_auth_id auth1.id).to eq user1
     end
 
-    it "do not find wrong user" do
+    it "do not finds wrong user" do
       expect(described_class.find_by_auth_id auth1.id).to_not eq user2
     end
   end
@@ -68,11 +68,11 @@ RSpec.describe Users::User, type: :model do
     let(:user1) { FactoryGirl.create(:user, role: 'Administrator') }
     let(:user2) { FactoryGirl.create(:user) }
 
-    it 'return true for admin user'do
+    it 'returns true for admin user'do
       expect(user1.admin?).to be true
     end
 
-    it 'return false for not admin user'do
+    it 'returns false for not admin user'do
       expect(user2.admin?).to be false
     end
   end
